@@ -57,3 +57,133 @@
         transition: 0.3s;
         min-width: 100px;
     }
+
+    #yesBtn {
+        background-color: #ff4d6d;
+        color: white;
+    }
+
+    #noBtn {
+        background-color: white;
+        color: #ff4d6d;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .flower {
+        position: fixed;
+        font-size: 28px;
+        animation: fall 3s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes fall {
+        0% { transform: translateY(-50px); }
+        100% { transform: translateY(100vh); }
+    }
+
+    #please, #trapMessage {
+        font-size: 18px;
+        margin-top: 20px;
+        padding: 0 20px;
+    }
+
+    #trapMessage {
+        color: yellow;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Georgia 💖<br>Will You Be My Valentine?</h1>
+
+<div class="photo-container">
+    <div>
+        <img id="georgiaImg" src="georgia.jpg" alt="Georgia">
+        <p>Future Valentine 💘</p>
+    </div>
+    <div>
+        <img id="aishaImg" src="aisha.jpg" alt="Aisha">
+        <p>Aisha Approves 🐱</p>
+    </div>
+</div>
+
+<div class="buttons">
+    <button id="yesBtn">Yes 💕</button>
+    <button id="noBtn">No 🙄</button>
+</div>
+
+<div id="please"></div>
+<div id="trapMessage"></div>
+
+<script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const pleaseText = document.getElementById("please");
+    const trapMessage = document.getElementById("trapMessage");
+    const georgiaImg = document.getElementById("georgiaImg");
+    const aishaImg = document.getElementById("aishaImg");
+
+    // Keep No button inside screen
+    function moveNoButton() {
+        const btnWidth = noBtn.offsetWidth;
+        const btnHeight = noBtn.offsetHeight;
+
+        const maxX = window.innerWidth - btnWidth;
+        const maxY = window.innerHeight - btnHeight - 50;
+
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+    }
+
+    noBtn.addEventListener("mouseover", moveNoButton);
+    noBtn.addEventListener("touchstart", function(e) {
+        e.preventDefault();
+        moveNoButton();
+        pleaseText.innerHTML = "pleaseeee Georgia 🥺";
+    });
+
+    noBtn.addEventListener("click", function() {
+        trapMessage.innerHTML = "Nice try 😈 There is only one correct answer.";
+        yesBtn.style.transform = "scale(1.3)";
+    });
+
+    yesBtn.addEventListener("click", function() {
+        pleaseText.innerHTML = "SHE SAID YESSS 💖💐🐱";
+        trapMessage.innerHTML = "";
+
+        georgiaImg.style.transform = "scale(1.2)";
+        aishaImg.style.transform = "scale(1.2)";
+
+        playMeow();
+        createFlowers();
+    });
+
+    function createFlowers() {
+        setInterval(() => {
+            const flower = document.createElement("div");
+            flower.classList.add("flower");
+            flower.innerHTML = ["🌸","🌹","🌷","💐","💖"][Math.floor(Math.random()*5)];
+            flower.style.left = Math.random() * window.innerWidth + "px";
+            document.body.appendChild(flower);
+
+            setTimeout(() => {
+                flower.remove();
+            }, 3000);
+        }, 250);
+    }
+
+    function playMeow() {
+        const meow = new Audio("https://www.soundjay.com/cat/cat-meow-2.mp3");
+        meow.play();
+    }
+</script>
+
+</body>
+</html>
