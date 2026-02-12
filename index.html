@@ -6,93 +6,89 @@
 <title>Georgia, Be My Valentine?</title>
 
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        background: linear-gradient(to right, #ff758c, #ff7eb3);
-        color: white;
-        min-height: 100vh;
-    }
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
-    h1 {
-        margin-top: 30px;
-        font-size: 1.8rem;
-        padding: 0 15px;
-    }
+h1 {
+    margin-top: 40px;
+    font-size: 1.9rem;
+}
 
-    .photo-container {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 20px;
-        flex-wrap: wrap;
-        padding: 0 10px;
-    }
+.photo-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
 
-    .photo-container img {
-        width: 140px;
-        height: 140px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 4px solid white;
-        box-shadow: 0 0 15px rgba(255,255,255,0.6);
-        transition: transform 0.4s ease;
-    }
+.photo-container img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
+    transition: transform 0.4s ease, opacity 0.6s ease;
+}
 
-    .buttons {
-        margin-top: 40px;
-        position: relative;
-        height: 150px;
-    }
+#georgiaImg {
+    opacity: 0; /* Hidden at start */
+}
 
-    button {
-        padding: 15px 25px;
-        font-size: 16px;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        margin: 10px;
-        transition: 0.3s;
-        min-width: 100px;
-    }
+.buttons {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    position: relative;
+    min-height: 120px;
+}
 
-    #yesBtn {
-        background-color: #ff4d6d;
-        color: white;
-    }
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-    #noBtn {
-        background-color: white;
-        color: #ff4d6d;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+#yesBtn {
+    background-color: #ff4d6d;
+    color: white;
+}
 
-    .flower {
-        position: fixed;
-        font-size: 28px;
-        animation: fall 3s linear infinite;
-        pointer-events: none;
-    }
+#noBtn {
+    background-color: white;
+    color: #ff4d6d;
+}
 
-    @keyframes fall {
-        0% { transform: translateY(-50px); }
-        100% { transform: translateY(100vh); }
-    }
+.heart {
+    position: fixed;
+    font-size: 24px;
+    animation: floatUp 1s ease-out forwards;
+    pointer-events: none;
+}
 
-    #please, #trapMessage {
-        font-size: 18px;
-        margin-top: 20px;
-        padding: 0 20px;
-    }
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
+}
 
-    #trapMessage {
-        color: yellow;
-        font-weight: bold;
-    }
+#message {
+    margin-top: 25px;
+    font-size: 20px;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -103,11 +99,11 @@
 <div class="photo-container">
     <div>
         <img id="georgiaImg" src="georgia.jpg" alt="Georgia">
-        <p>Future Valentine 💘</p>
+        <p id="georgiaText" style="opacity:0;">Future Valentine 💘</p>
     </div>
     <div>
-        <img id="aishaImg" src="aisha.jpg" alt="Aisha">
-        <p>Aisha Approves 🐱</p>
+        <img src="aisha.jpg" alt="Aisha">
+        <p>Aisha is watching 👀🐱</p>
     </div>
 </div>
 
@@ -116,74 +112,71 @@
     <button id="noBtn">No 🙄</button>
 </div>
 
-<div id="please"></div>
-<div id="trapMessage"></div>
+<div id="message"></div>
 
 <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const pleaseText = document.getElementById("please");
-    const trapMessage = document.getElementById("trapMessage");
-    const georgiaImg = document.getElementById("georgiaImg");
-    const aishaImg = document.getElementById("aishaImg");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const georgiaImg = document.getElementById("georgiaImg");
+const georgiaText = document.getElementById("georgiaText");
+const message = document.getElementById("message");
 
-    // Keep No button inside screen
-    function moveNoButton() {
-        const btnWidth = noBtn.offsetWidth;
-        const btnHeight = noBtn.offsetHeight;
+let yesScale = 1;
+let noScale = 1;
 
-        const maxX = window.innerWidth - btnWidth;
-        const maxY = window.innerHeight - btnHeight - 50;
+// Grow Yes & Shrink No when she tries No
+function moveNoButton() {
+    noBtn.style.position = "absolute";
 
-        const x = Math.random() * maxX;
-        const y = Math.random() * maxY;
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
 
-        noBtn.style.left = x + "px";
-        noBtn.style.top = y + "px";
+    const maxX = window.innerWidth - btnWidth;
+    const maxY = window.innerHeight - btnHeight - 50;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    // Grow Yes
+    yesScale += 0.1;
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    // Shrink No
+    noScale -= 0.05;
+    if (noScale > 0.3) {
+        noBtn.style.transform = `scale(${noScale})`;
     }
+}
 
-    noBtn.addEventListener("mouseover", moveNoButton);
-    noBtn.addEventListener("touchstart", function(e) {
-        e.preventDefault();
-        moveNoButton();
-        pleaseText.innerHTML = "pleaseeee Georgia 🥺";
-    });
+noBtn.addEventListener("mouseover", moveNoButton);
+noBtn.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    moveNoButton();
+});
 
-    noBtn.addEventListener("click", function() {
-        trapMessage.innerHTML = "Nice try 😈 There is only one correct answer.";
-        yesBtn.style.transform = "scale(1.3)";
-    });
+// Hearts burst anywhere she taps
+document.addEventListener("click", function(e) {
+    for (let i = 0; i < 6; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "💖";
+        heart.style.left = (e.clientX + (Math.random()*40-20)) + "px";
+        heart.style.top = (e.clientY + (Math.random()*40-20)) + "px";
+        document.body.appendChild(heart);
 
-    yesBtn.addEventListener("click", function() {
-        pleaseText.innerHTML = "SHE SAID YESSS 💖💐🐱";
-        trapMessage.innerHTML = "";
-
-        georgiaImg.style.transform = "scale(1.2)";
-        aishaImg.style.transform = "scale(1.2)";
-
-        playMeow();
-        createFlowers();
-    });
-
-    function createFlowers() {
-        setInterval(() => {
-            const flower = document.createElement("div");
-            flower.classList.add("flower");
-            flower.innerHTML = ["🌸","🌹","🌷","💐","💖"][Math.floor(Math.random()*5)];
-            flower.style.left = Math.random() * window.innerWidth + "px";
-            document.body.appendChild(flower);
-
-            setTimeout(() => {
-                flower.remove();
-            }, 3000);
-        }, 250);
+        setTimeout(() => heart.remove(), 1000);
     }
+});
 
-    function playMeow() {
-        const meow = new Audio("https://www.soundjay.com/cat/cat-meow-2.mp3");
-        meow.play();
-    }
-</script>
+// When she clicks Yes
+yesBtn.addEventListener("click", function() {
+    message.innerHTML = "SHE SAID YESSSS 💖💍🐱";
 
-</body>
-</html>
+    georgiaImg.style.opacity = "1";
+    georgiaText.style.opacity = "1";
+    georgiaImg.style.transform = "scale(1.2)";
+
+    yesBtn.style.displa
